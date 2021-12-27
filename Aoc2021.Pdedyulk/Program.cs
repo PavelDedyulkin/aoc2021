@@ -173,85 +173,82 @@ namespace Aoc2021.PDedyulk
 
             const int size = 5;
      
-            int foundWinBoard()
+            int checkWinBoard(int crossingIndex)
             {
-                
-                var numBoards = boardNumbers.Count / (size * size);
-                for (int board = 0; board < numBoards; ++board)
-                {
-                    var boardMatrix = boardNumbers.Skip(board * size * size).Take(size * size).ToArray();
-                    for (int row = 0; row < size; ++row)
-                    {
-                        var crossed = true;
-                        for (int col = 0; col < size; ++col)
-                        {
-                            if (boardMatrix[row * 5 + col] != -1)
-                            {
-                                crossed = false;
-                                break;
-                            }
-                        }
+              var board =  crossingIndex / (size * size);
+              var boardIndex = crossingIndex % (size * size);
+              var boardRow = boardIndex / size;
+              var boardCol = boardIndex % size;
 
-                        if (crossed)
-                            return board;
-                        
-                    }
-                    
-                    for (int col = 0; col < size; ++col)
-                    {
-                        var crossed = true;
-                        for (int row = 0; row < size; ++col)
-                        {
-                            if (boardMatrix[row * 5 + col] != -1)
-                            {
-                                crossed = false;
-                                break;
-                            }
-                        }
+              var boardStart = board * size * size;
+              bool crossed = true;
+              for (int col = 0; col < size; ++col)
+              {
+                  if (boardNumbers[boardStart + boardRow * size + col] != -1)
+                  {
+                      crossed = false;
+                      break;
+                  }
+              }
 
-                        if (crossed)
-                            return board;
-                        
-                    }
-
-                }
-
-                return -1;
+              if (crossed)
+                  return board;
+              
+              crossed = true;
+              for (int row = 0; row < size; ++row)
+              {
+                  if (boardNumbers[boardStart + boardCol  + row*size] != -1)
+                  {
+                      crossed = false;
+                      break;
+                  }
+              }
+              
+              if (crossed)
+                  return board;
 
 
+              return -1;
             }
-             int offset = 0;
-            while (true)
-            {
-                foreach (var numberToCross  in numbers.Skip(offset).Take(size))
-                {
-                    for (int i = 0; i < boardNumbers.Count; i++)
-                    {
-                        if (boardNumbers[i] == numberToCross)
-                        {
-                            boardNumbers[i] = -1;
-                        }
-                    }
-                    
-                    var winBoard = foundWinBoard();
-                    if (winBoard != -1)
-                    {
-                        var s = 0;
-                        for (int k = winBoard * size*size; k < winBoard*size*size + (size * size); ++k)
-                        {
-                            if (boardNumbers[k] != -1)
-                            {
-                                s += boardNumbers[k];
-                            }
-                        }
-                        Console.WriteLine(s * numberToCross);
-                        Environment.Exit(0);
-                    }
 
-                }
+            
+             var lastBoardResult = -1;
+             var lastBoard = -1;
 
-                offset += 5;
-            }
+
+             foreach (var numberToCross in numbers)
+             {
+                 for (int i = 0; i < boardNumbers.Count; i++)
+                 {
+                     if (boardNumbers[i] == numberToCross)
+                     {
+                         boardNumbers[i] = -1;
+                         var winBoard = checkWinBoard(i);
+                         if (winBoard != -1)
+                         {
+                             
+                                 lastBoard = winBoard;
+                                 var s = 0;
+                                 for (int k = winBoard * size * size; k < winBoard * size * size + (size * size); ++k)
+                                 {
+                                     if (boardNumbers[k] != -1)
+                                     {
+                                         s += boardNumbers[k];
+                                         boardNumbers[k] = -1;
+                                     }
+                                 }
+
+                                 lastBoardResult = s * numberToCross;
+                             
+                     }
+
+                     }
+                 }
+             }
+
+
+             Console.WriteLine(lastBoard);
+            Console.WriteLine(lastBoardResult);
         }
 
         static void Main()

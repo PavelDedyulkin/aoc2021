@@ -6,7 +6,7 @@ namespace Aoc2021.PDedyulk
 {
     class Program
     {
-        static void aoc1(string input)
+        static void day1(string input)
         {
             int cnt = 0;
             var s = new int[3];
@@ -41,7 +41,7 @@ namespace Aoc2021.PDedyulk
             
         }
 
-        static void aoc2(string input)
+        static void day2(string input)
         {
             decimal hor = 0;
             decimal aim = 0;
@@ -73,7 +73,7 @@ namespace Aoc2021.PDedyulk
 
         }
 
-        static void aoc3(string input)
+        static void day3(string input)
         {
             
             int Count1InCol(char[] mask, int col, out int total, out string firstLine)
@@ -147,7 +147,7 @@ namespace Aoc2021.PDedyulk
 
         static void Main()
         {
-            aoc3(@"./data/3/input.txt");
+            day3(@"./data/3/input.txt");
         }
     }
 }

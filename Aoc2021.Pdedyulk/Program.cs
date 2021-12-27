@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.Intrinsics.X86;
 
 namespace Aoc2021.PDedyulk
@@ -145,9 +147,116 @@ namespace Aoc2021.PDedyulk
 
         }
 
+        static void day4(string input)
+        {
+            int[] numbers = null;
+            
+            var boardNumbers = new List<int>();
+            
+            //fill numbers and board numbers
+            foreach (var line in File.ReadLines(input))
+            {
+                if (numbers == null)
+                {
+                    numbers = line.Split(',').Select(r => int.Parse(r)).ToArray();
+                    continue;
+                }
+                
+                if (line == "") continue;
+
+                foreach (var n in line.Split(' ',StringSplitOptions.RemoveEmptyEntries)
+                    .Select(r => int.Parse(r)))
+                {
+                    boardNumbers.Add(n);
+                }
+            }
+
+            const int size = 5;
+     
+            int foundWinBoard()
+            {
+                
+                var numBoards = boardNumbers.Count / (size * size);
+                for (int board = 0; board < numBoards; ++board)
+                {
+                    var boardMatrix = boardNumbers.Skip(board * size * size).Take(size * size).ToArray();
+                    for (int row = 0; row < size; ++row)
+                    {
+                        var crossed = true;
+                        for (int col = 0; col < size; ++col)
+                        {
+                            if (boardMatrix[row * 5 + col] != -1)
+                            {
+                                crossed = false;
+                                break;
+                            }
+                        }
+
+                        if (crossed)
+                            return board;
+                        
+                    }
+                    
+                    for (int col = 0; col < size; ++col)
+                    {
+                        var crossed = true;
+                        for (int row = 0; row < size; ++col)
+                        {
+                            if (boardMatrix[row * 5 + col] != -1)
+                            {
+                                crossed = false;
+                                break;
+                            }
+                        }
+
+                        if (crossed)
+                            return board;
+                        
+                    }
+
+                }
+
+                return -1;
+
+
+            }
+             int offset = 0;
+            while (true)
+            {
+                foreach (var numberToCross  in numbers.Skip(offset).Take(size))
+                {
+                    for (int i = 0; i < boardNumbers.Count; i++)
+                    {
+                        if (boardNumbers[i] == numberToCross)
+                        {
+                            boardNumbers[i] = -1;
+                        }
+                    }
+                    
+                    var winBoard = foundWinBoard();
+                    if (winBoard != -1)
+                    {
+                        var s = 0;
+                        for (int k = winBoard * size*size; k < winBoard*size*size + (size * size); ++k)
+                        {
+                            if (boardNumbers[k] != -1)
+                            {
+                                s += boardNumbers[k];
+                            }
+                        }
+                        Console.WriteLine(s * numberToCross);
+                        Environment.Exit(0);
+                    }
+
+                }
+
+                offset += 5;
+            }
+        }
+
         static void Main()
         {
-            day3(@"./data/3/input.txt");
+            day4(@"./data/4/input.txt");
         }
     }
 }
